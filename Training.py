@@ -12,7 +12,7 @@ import Test
 import Evaluate
 
 import functools
-from tensorflow.contrib.signal.python.ops import window_ops
+from tensorflow.python.ops.signal import window_ops
 
 ex = Experiment('Waveunet Training', ingredients=[config_ingredient])
 
