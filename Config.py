@@ -6,8 +6,8 @@ config_ingredient = Ingredient("cfg")
 @config_ingredient.config
 def cfg():
     # Base configuration
-    model_config = {"musdb_path" : "/mnt/windaten/Datasets/MUSDB18/", # SET MUSDB PATH HERE, AND SET CCMIXTER PATH IN CCMixter.xml
-                    "estimates_path" : "/mnt/windaten/Source_Estimates", # SET THIS PATH TO WHERE YOU WANT SOURCE ESTIMATES PRODUCED BY THE TRAINED MODEL TO BE SAVED. Folder itself must exist!
+    model_config = {"musdb_path" : "D:/Users/kijam/Documents/3CollegeClasses/CS534/OurCodebase/Wave-U-Net/Datasets/MUSDB18/", # SET MUSDB PATH HERE, AND SET CCMIXTER PATH IN CCMixter.xml
+                    "estimates_path" : "SourceEstimates", # SET THIS PATH TO WHERE YOU WANT SOURCE ESTIMATES PRODUCED BY THE TRAINED MODEL TO BE SAVED. Folder itself must exist!
                     "data_path" : "data", # Set this to where the preprocessed dataset should be saved
 
                     "model_base_dir" : "checkpoints", # Base folder for model checkpoints
@@ -36,6 +36,12 @@ def cfg():
                     'augmentation' : True, # Random attenuation of source signals to improve generalisation performance (data augmentation)
                     'raw_audio_loss' : True, # Only active for unet_spectrogram network. True: L2 loss on audio. False: L1 loss on spectrogram magnitudes for training and validation and test loss
                     'worse_epochs' : 20, # Patience for early stoppping on validation set
+                    'musdb_sampling': False, # In case only a sample of the MUSDB18 dataset is being used
+                    'use_ccmixter': False, # Incates if CCMixter will be used for training
+                    'musdb_sr': 0.1, # Percentage of the MUSDB18 dataset to keep
+                    'mhe': True, # Indicates if MHE regularization will be added or not to the loss function
+                    'mhe_model': 'mhe', # Select between standard MHE ("mhe") and half-space MHE ("half_mhe")
+                    'mhe_power': '0' # Select the "power s" parameter. For Euclidean distance: ["0","1","2"], Angular distance: ["a0","a1","a2"]   
                     }
     experiment_id = np.random.randint(0,1000000)
 
@@ -158,4 +164,52 @@ def unet_spectrogram_l1():
         "duration" : 13,
         "num_initial_filters" : 16,
         "raw_audio_loss" : False
+    }
+
+# ---------------------
+# BASELINE & MHE MODELS
+# ---------------------
+
+@config_ingredient.named_config
+def baseline_no_mhe():
+    print("Training singing voice separation (mono) with NO MHE")
+    model_config = {
+        "output_type": "difference",
+        "context": True,
+        "upsampling": "linear",
+        "mono_downmix": True,
+        "task" : "voice",
+        "musdb_sampling": False,
+        "mhe": False
+    }
+
+
+@config_ingredient.named_config
+def mhe_0():
+    print("Training singing voice separation (mono) with MHE=0")
+    model_config = {
+        "output_type": "difference",
+        "context": True,
+        "upsampling": "linear",
+        "mono_downmix": True,
+        "task" : "voice",
+        "musdb_sampling": False,
+        "mhe": True,
+        "mhe_model": "mhe",
+        "mhe_power": "0"
+    }
+
+@config_ingredient.named_config
+def half_mhe_a2():
+    print("Training singing voice separation (mono) with half_MHE=a2")
+    model_config = {
+        "output_type": "difference",
+        "context": True,
+        "upsampling": "linear",
+        "mono_downmix": True,
+        "task" : "voice",
+        "musdb_sampling": False,
+        "mhe": True,
+        "mhe_model": "half_mhe",
+        "mhe_power": "a2"
     }

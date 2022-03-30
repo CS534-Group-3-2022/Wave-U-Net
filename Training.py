@@ -62,6 +62,20 @@ def train(model_config, experiment_id, load_model=None):
             separator_loss += tf.reduce_mean(tf.square(real_source - sep_source))
     separator_loss = separator_loss / float(model_config["num_sources"]) # Normalise by number of sources
 
+    # Add MHE thompson loss as regularization, if in use
+    if model_config["mhe"]:
+        thom_loss_list = tf.get_collection('thomson_loss') # Hidden layers
+        if len(thom_loss_list) != 0:
+            thom_loss = tf.add_n(thom_loss_list)
+            thom_loss /= (model_config["num_layers"]*2) # Apply weighting to MHE
+            separator_loss += thom_loss
+
+        # ADD THE NEXT 4 LINES IF MHE FOR OUTPUT LAYER IS IN USE     
+        #thom_final_list = tf.get_collection('thomson_final') # Output layer
+        #if len(thom_final_list) != 0:
+            #thom_final = tf.add_n(thom_final_list)
+            #separator_loss += thom_final
+
     # TRAINING CONTROL VARIABLES
     global_step = tf.get_variable('global_step', [], initializer=tf.constant_initializer(0), trainable=False, dtype=tf.int64)
     increment_global_step = tf.assign(global_step, global_step + 1)

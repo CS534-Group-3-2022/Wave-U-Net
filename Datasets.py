@@ -148,7 +148,7 @@ def get_dataset(model_config, input_shape, output_shape, partition):
         dataset["test"] = dsd_test
 
         # MUSDB base dataset loaded now, now create task-specific dataset based on that
-        if model_config["task"] == "voice":
+        if model_config["task"] == "voice" and model_config["use_ccmixter"]:
             # Prepare CCMixter
             print("Preparing CCMixter dataset!")
             ccm = getCCMixter("CCMixter.xml")
