@@ -35,7 +35,7 @@ def cfg():
                     'task' : 'voice', # Type of separation task. 'voice' : Separate music into voice and accompaniment. 'multi_instrument': Separate music into guitar, bass, vocals, drums and other (Sisec)
                     'augmentation' : True, # Random attenuation of source signals to improve generalisation performance (data augmentation)
                     'raw_audio_loss' : True, # Only active for unet_spectrogram network. True: L2 loss on audio. False: L1 loss on spectrogram magnitudes for training and validation and test loss
-                    'worse_epochs' : 20, # Patience for early stoppping on validation set
+                    'worse_epochs' : 5, # Patience for early stoppping on validation set
                     'musdb_sampling': False, # In case only a sample of the MUSDB18 dataset is being used
                     'use_ccmixter': False, # Incates if CCMixter will be used for training
                     'musdb_sr': 0.1, # Percentage of the MUSDB18 dataset to keep

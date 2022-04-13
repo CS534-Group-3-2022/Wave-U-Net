@@ -33,7 +33,7 @@ class UnetAudioSeparator:
         self.upsampling = model_config["upsampling"]
         self.output_type = model_config["output_type"]
         self.context = model_config["context"]
-        self.padding = "valid" if model_config["context"] else "same"
+        self.padding = "VALID" if model_config["context"] else "SAME"
         self.source_names = model_config["source_names"]
         self.num_channels = 1 if model_config["mono_downmix"] else 2
         self.output_activation = model_config["output_activation"]
