@@ -36,6 +36,7 @@ def cfg():
                     'augmentation' : True, # Random attenuation of source signals to improve generalisation performance (data augmentation)
                     'raw_audio_loss' : True, # Only active for unet_spectrogram network. True: L2 loss on audio. False: L1 loss on spectrogram magnitudes for training and validation and test loss
                     'worse_epochs' : 20, # Patience for early stoppping on validation set
+                    'dwt' : True,
                     }
     experiment_id = np.random.randint(0,1000000)
 

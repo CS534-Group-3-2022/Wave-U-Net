@@ -5,6 +5,7 @@ import Utils
 from Utils import LeakyReLU
 import numpy as np
 import Models.OutputLayer
+import DWT
 
 class UnetAudioSeparator:
     '''
@@ -30,6 +31,7 @@ class UnetAudioSeparator:
         self.source_names = model_config["source_names"]
         self.num_channels = 1 if model_config["mono_downmix"] else 2
         self.output_activation = model_config["output_activation"]
+        self.dwt = model_config["dwt"]
 
     def get_padding(self, shape):
         '''
@@ -97,7 +99,10 @@ class UnetAudioSeparator:
             for i in range(self.num_layers):
                 current_layer = tf.layers.conv1d(current_layer, self.num_initial_filters + (self.num_initial_filters * i), self.filter_size, strides=1, activation=LeakyReLU, padding=self.padding) # out = in - filter + 1
                 enc_outputs.append(current_layer)
-                current_layer = current_layer[:,::2,:] # Decimate by factor of 2 # out = (in-1)/2 + 1
+                if(self.dwt):
+                    current_layer = DWT().call(current_layer)
+                else:
+                    current_layer = current_layer[:,::2,:] # Decimate by factor of 2 # out = (in-1)/2 + 1
 
             current_layer = tf.layers.conv1d(current_layer, self.num_initial_filters + (self.num_initial_filters * self.num_layers),self.filter_size,activation=LeakyReLU,padding=self.padding) # One more conv here since we need to compute features after last decimation
 
@@ -111,7 +116,9 @@ class UnetAudioSeparator:
                     # Learned interpolation between two neighbouring time positions by using a convolution filter of width 2, and inserting the responses in the middle of the two respective inputs
                     current_layer = Models.InterpolationLayer.learned_interpolation_layer(current_layer, self.padding, i)
                 else:
-                    if self.context:
+                    if self.dwt:
+                        current_layer = DWT().inverse(current_layer)
+                    elif self.context:
                         current_layer = tf.image.resize_bilinear(current_layer, [1, current_layer.get_shape().as_list()[2] * 2 - 1], align_corners=True)
                     else:
                         current_layer = tf.image.resize_bilinear(current_layer, [1, current_layer.get_shape().as_list()[2]*2]) # out = in + in - 1
