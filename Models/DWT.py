@@ -76,13 +76,14 @@ class DWT(tf.keras.layers.Layer):
         even, odd = self.split(x)
         unscaled_highfreq = odd - self.predict(even)
         unscaled_lowfreq = even + self.update(unscaled_highfreq)
-        y = unscaled_highfreq/self.scaling_factor, unscaled_lowfreq*self.scaling_factor
+        y1 = unscaled_highfreq/self.scaling_factor
+        y2 = unscaled_lowfreq*self.scaling_factor
         
         if no_concat:
             return y
         else:
             #return torch.cat(y, dim=1)
-            return tf.keras.layers.Concatenate(axis=1)(y)
+            return tf.keras.layers.Concatenate(axis=1)(y1, y2)
 
     def inverse(self, x, no_concat=False):
         '''Inverse computation
