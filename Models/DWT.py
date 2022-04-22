@@ -80,10 +80,10 @@ class DWT(tf.keras.layers.Layer):
         y2 = unscaled_lowfreq*self.scaling_factor
         
         if no_concat:
-            return y
+            return y1,y2
         else:
             #return torch.cat(y, dim=1)
-            return tf.keras.layers.Concatenate(axis=1)(y1, y2)
+            return tf.keras.layers.Concatenate(axis=1)([y1, y2])
 
     def inverse(self, x, no_concat=False):
         '''Inverse computation
@@ -94,6 +94,7 @@ class DWT(tf.keras.layers.Layer):
         Return:
             tf.Tensor: inverse DWT of x (batch x ch x time)
         '''
+        #print(x.shape)
         if no_concat:
             assert isinstance(x, tuple), 'If no_concat=True, x must be a tuple of high- and low-frequency components.'
             highfreq, lowfreq = x
@@ -108,6 +109,10 @@ class DWT(tf.keras.layers.Layer):
         even = unscaled_lowfreq - self.update(unscaled_highfreq)
         odd = unscaled_highfreq + self.predict(even)
         y = tf.stack((even, odd), axis=-1)
-        y = y.reshape(y.shape[0], y.shape[1], -1)
+        #print(even)
+        #print(odd)
+        #print(y.shape[0])
+        #print(y.shape[1])
+        y = tf.reshape(y, [y.shape[0], y.shape[1], -1])
         
         return y
