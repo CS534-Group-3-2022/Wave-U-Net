@@ -14,11 +14,11 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-model_name = "final_mhe_0_sample_valstep_reg2L" # change model name here
+model_name = "testing_mhe_9311" # change model name here
 filename = str(model_name + '.csv')
 out_path = r"D:\Users\kijam\Documents\3CollegeClasses\CS534\OurCodebase\Wave-U-Net\Results\SDR" # where to save SDR metrics
 
-json_folder = r"D:\Users\kijam\Documents\3CollegeClasses\CS534\OurCodebase\Wave-U-Net\Source_Estimates\final_mhe_0\test" # add "r" before the path
+json_folder = r"D:\Users\kijam\Documents\3CollegeClasses\CS534\OurCodebase\Wave-U-Net\SourceEstimates\test" # add "r" before the path
 compute_averages = True
 plot_hist = False
 metric = "SDR"
