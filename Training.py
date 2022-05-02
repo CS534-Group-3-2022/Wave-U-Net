@@ -124,9 +124,10 @@ def train(model_config, experiment_id, load_model=None):
 def optimise(model_config, experiment_id):
     epoch = 0
     best_loss = 10000
-    model_path = 'checkpoints/685445/685445-22528'
-    best_model_path = None
+    model_path = "checkpoints/704372/704372-15360"
+    best_model_path = "checkpoints/704372/704372-15360"
     for i in range(2):
+        continue
         worse_epochs = 0
         if i==1:
             print("Finished first round of training, now entering fine-tuning stage")
