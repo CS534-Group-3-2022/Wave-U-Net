@@ -138,7 +138,7 @@ def train(model_config, experiment_id, load_model=None):
 def optimise(model_config, experiment_id):
     epoch = 0
     best_loss = 10000
-    model_path = 'checkpoints/415361/415361-42000'
+    model_path = None
     best_model_path = None
     for i in range(2):
         worse_epochs = 0
